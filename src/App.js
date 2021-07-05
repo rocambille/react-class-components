@@ -1,28 +1,38 @@
-import { useEffect, useState } from 'react';
+import { Component } from 'react';
 import './App.css';
 
 import Pokemon from './Pokemon';
 
-function App() {
-  const [pokemonList, setPokemonList] = useState([]);
-  const [pokemonUrl, setPokemonUrl] = useState();
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pokemonList: [],
+      pokemonUrl: null,
+    };
+  }
 
-  useEffect(() => {
+  componentDidMount() {
     fetch('https://pokeapi.co/api/v2/pokemon/')
       .then((response) => response.json())
-      .then((data) => setPokemonList(data.results));
-  }, []);
+      .then((data) => this.setState({pokemonList: data.results}));
+  }
 
-  return (
-    <div style={{display: 'flex'}}>
-      <ul className="App">
-        {pokemonList.map((pokemon) => <li key={pokemon.name} onClick={() => {
-          setPokemonUrl(pokemon.url);
-      }}>{pokemon.name}</li>)}
-      </ul>
-      <Pokemon pokemonUrl={pokemonUrl} />
-    </div>
-  );
+  render() {
+    const { pokemonList, pokemonUrl } = this.state;
+    return (
+      <div style={{display: 'flex'}}>
+        <ul className="App">
+          {pokemonList.map((pokemon) => <li key={pokemon.name} onClick={() => {
+            this.setState({
+              pokemonUrl: pokemon.url,
+            });
+          }}>{pokemon.name}</li>)}
+        </ul>
+        <Pokemon pokemonUrl={pokemonUrl} />
+      </div>
+    );
+  }
 }
 
 export default App;
